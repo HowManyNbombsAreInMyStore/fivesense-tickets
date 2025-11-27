@@ -35,7 +35,25 @@ function App() {
   // Get ticket name from URL parameter
   const getTicketFromURL = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('ticket');
+    // Try to get ticket parameter first
+    let ticket = urlParams.get('ticket');
+    // If not found, check if there's a parameter without a name (like ?transcript)
+    if (!ticket) {
+      // Get the first parameter value if it exists
+      const entries = urlParams.entries();
+      const firstEntry = entries.next();
+      if (!firstEntry.done) {
+        // If there's a parameter without a value, use the parameter name
+        if (firstEntry.value[1] === '') {
+          ticket = firstEntry.value[0];
+        }
+      }
+    }
+    // If still no ticket, try to load default transcript
+    if (!ticket) {
+      ticket = 'transcript';
+    }
+    return ticket;
   };
 
   // Load transcript based on ticket name
@@ -46,12 +64,6 @@ function App() {
     // If no ticket name provided, try to get from URL
     if (!ticketName) {
       ticketName = getTicketFromURL();
-      if (!ticketName) {
-        setTicketContent('');
-        setTicketName('');
-        setLoading(false);
-        return;
-      }
     }
 
     setTicketName(ticketName);
@@ -233,16 +245,7 @@ function App() {
                 <p>Loading ticket: {ticketName}</p>
               ) : (
                 <div style={{textAlign: 'center'}}>
-                  <p>No ticket specified in URL.</p>
-                  <p style={{marginTop: '20px', color: '#b9bbbe'}}>
-                    To view a ticket, please add a <code>?ticket=FILENAME</code> parameter to the URL.
-                  </p>
-                  <p style={{marginTop: '10px', color: '#b9bbbe'}}>
-                    Example: <a href="?ticket=transcript" style={{color: '#7289da'}}>?ticket=transcript</a> to view the default transcript
-                  </p>
-                  <p style={{marginTop: '20px', color: '#b9bbbe', fontSize: '0.9rem'}}>
-                    Note: The ticket files are located in the <code>/ticket</code> directory.
-                  </p>
+                  <p>Loading default transcript...</p>
                 </div>
               )}
             </div>
