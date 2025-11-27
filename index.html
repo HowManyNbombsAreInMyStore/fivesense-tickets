@@ -206,54 +206,6 @@
             margin-bottom: 15px;
         }
 
-        .ticket-selector {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .ticket-selector h2 {
-            margin-bottom: 15px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .ticket-input {
-            display: flex;
-            gap: 10px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .ticket-input input {
-            flex: 1;
-            padding: 12px 15px;
-            border-radius: 6px;
-            border: 1px solid #40444b;
-            background: #2f3136;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .ticket-input button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .ticket-input button:hover {
-            background: var(--primary-dark);
-        }
-
         footer {
             text-align: center;
             color: var(--text-secondary);
@@ -304,10 +256,6 @@
             #transcript-container {
                 height: 70vh;
             }
-            
-            .ticket-input {
-                flex-direction: column;
-            }
         }
 
         @media (max-width: 480px) {
@@ -338,17 +286,6 @@
             <p class="subtitle">View and manage your Discord ticket transcripts with our modern interface</p>
         </header>
         
-        <div class="ticket-selector">
-            <h2><i class="fas fa-search"></i> Load Ticket</h2>
-            <div class="ticket-input">
-                <input type="text" id="ticket-name" placeholder="Enter ticket name (without .html extension)" value="">
-                <button id="load-ticket-btn"><i class="fas fa-arrow-right"></i> Load</button>
-            </div>
-            <p style="text-align: center; margin-top: 10px; color: var(--text-secondary); font-size: 0.9rem;">
-                Example: For ticket/ticket123.html, enter "ticket123"
-            </p>
-        </div>
-        
         <div class="viewer-container">
             <div class="viewer-header">
                 <div class="viewer-title">
@@ -356,17 +293,13 @@
                     <span>Ticket Transcript</span>
                     <div class="ticket-info" id="current-ticket">
                         <i class="fas fa-file-alt"></i>
-                        <span>No ticket loaded</span>
+                        <span>Loading ticket...</span>
                     </div>
                 </div>
                 <div class="controls">
                     <button class="btn btn-outline" id="refresh-transcript">
                         <i class="fas fa-sync-alt"></i>
                         Refresh
-                    </button>
-                    <button class="btn" id="load-transcript">
-                        <i class="fas fa-redo"></i>
-                        Reload Current
                     </button>
                 </div>
             </div>
@@ -375,9 +308,9 @@
                 <div class="loading">
                     <div class="spinner"></div>
                     <h3>Loading Ticket Transcript</h3>
-                    <p>Please enter a ticket name above or provide it in the URL as ?ticket=name</p>
+                    <p>Please specify a ticket name in the URL using ?ticket=name parameter</p>
                     <p style="margin-top: 20px; color: var(--text-secondary);">
-                        Example URL: yoursite.com/?ticket=ticket123
+                        Example: yoursite.com/?ticket=ticket123
                     </p>
                 </div>
             </div>
@@ -397,28 +330,24 @@
 
         // Load transcript based on ticket name
         function loadTranscript(ticketName = null) {
-            // If no ticket name provided, try to get from URL or input field
+            // If no ticket name provided, try to get from URL
             if (!ticketName) {
                 ticketName = getTicketFromURL();
                 if (!ticketName) {
-                    const inputTicketName = document.getElementById('ticket-name').value.trim();
-                    if (inputTicketName) {
-                        ticketName = inputTicketName;
-                    } else {
-                        // Show instructions if no ticket specified
-                        const container = document.getElementById('transcript-container');
-                        container.innerHTML = `
-                            <div class="loading">
-                                <div class="spinner"></div>
-                                <h3>Loading Ticket Transcript</h3>
-                                <p>Please enter a ticket name above or provide it in the URL as ?ticket=name</p>
-                                <p style="margin-top: 20px; color: var(--text-secondary);">
-                                    Example URL: yoursite.com/?ticket=ticket123
-                                </p>
-                            </div>
-                        `;
-                        return;
-                    }
+                    // Show instructions if no ticket specified
+                    const container = document.getElementById('transcript-container');
+                    container.innerHTML = `
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <h3>No Ticket Specified</h3>
+                            <p>Please specify a ticket name in the URL using ?ticket=name parameter</p>
+                            <p style="margin-top: 20px; color: var(--text-secondary);">
+                                Example: yoursite.com/?ticket=ticket123
+                            </p>
+                        </div>
+                    `;
+                    document.getElementById('current-ticket').innerHTML = '<i class="fas fa-file-alt"></i> No ticket specified';
+                    return;
                 }
             }
 
@@ -442,11 +371,10 @@
                             <h3><i class="fas fa-exclamation-triangle"></i> Error Loading Transcript</h3>
                             <p>Could not load ticket file: ${ticketName}.html</p>
                             <p>Tried the following paths:<br>${paths.join('<br>')}</p>
-                            <button class="btn" onclick="resetViewer()" style="margin-top: 20px;">
-                                <i class="fas fa-undo"></i> Try Another Ticket
-                            </button>
+                            <p style="margin-top: 15px;">Please ensure the ticket file exists in the ticket/ directory.</p>
                         </div>
                     `;
+                    document.getElementById('current-ticket').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error loading: ' + ticketName;
                     return;
                 }
 
@@ -486,67 +414,14 @@
             tryPath(0);
         }
 
-        // Reset viewer to initial state
-        function resetViewer() {
-            document.getElementById('ticket-name').value = '';
-            document.getElementById('current-ticket').innerHTML = '<i class="fas fa-file-alt"></i> No ticket loaded';
-            
-            const container = document.getElementById('transcript-container');
-            container.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <h3>Loading Ticket Transcript</h3>
-                    <p>Please enter a ticket name above or provide it in the URL as ?ticket=name</p>
-                    <p style="margin-top: 20px; color: var(--text-secondary);">
-                        Example URL: yoursite.com/?ticket=ticket123
-                    </p>
-                </div>
-            `;
-        }
-
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if ticket parameter exists in URL
-            const ticketFromURL = getTicketFromURL();
-            if (ticketFromURL) {
-                document.getElementById('ticket-name').value = ticketFromURL;
-                loadTranscript(ticketFromURL);
-            }
-        });
-
-        document.getElementById('load-transcript').addEventListener('click', function() {
-            const currentTicket = document.getElementById('ticket-name').value.trim();
-            if (currentTicket) {
-                loadTranscript(currentTicket);
-            } else {
-                loadTranscript();
-            }
+            // Check if ticket parameter exists in URL and load it
+            loadTranscript();
         });
 
         document.getElementById('refresh-transcript').addEventListener('click', function() {
-            const currentTicket = document.getElementById('ticket-name').value.trim();
-            if (currentTicket) {
-                loadTranscript(currentTicket);
-            }
-        });
-
-        document.getElementById('load-ticket-btn').addEventListener('click', function() {
-            const ticketName = document.getElementById('ticket-name').value.trim();
-            if (ticketName) {
-                // Update URL with ticket parameter
-                const url = new URL(window.location);
-                url.searchParams.set('ticket', ticketName);
-                window.history.replaceState({}, '', url);
-                
-                loadTranscript(ticketName);
-            }
-        });
-
-        // Allow Enter key to load ticket
-        document.getElementById('ticket-name').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('load-ticket-btn').click();
-            }
+            loadTranscript();
         });
     </script>
 </body>
