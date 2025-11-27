@@ -307,9 +307,6 @@
                     <div class="spinner"></div>
                     <h3>Loading Ticket Transcript</h3>
                     <p>No Tickets available currently.</p>
-                    <p style="margin-top: 20px; color: var(--text-secondary);">
-                        Example: yoursite.com/?ticket=ticket123
-                    </p>
                 </div>
             </div>
         </div>
@@ -337,11 +334,7 @@
                     container.innerHTML = `
                         <div class="loading">
                             <div class="spinner"></div>
-                            <h3>No Ticket Specified</h3>
-                            <p>Please specify a ticket name in the URL using ?ticket=name parameter</p>
-                            <p style="margin-top: 20px; color: var(--text-secondary);">
-                                Example: yoursite.com/?ticket=ticket123
-                            </p>
+                            <h3>No Tickets available currently.</h3>
                         </div>
                     `;
                     document.getElementById('current-ticket').innerHTML = '<i class="fas fa-file-alt"></i> No ticket specified';
