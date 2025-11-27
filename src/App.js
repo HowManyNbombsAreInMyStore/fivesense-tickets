@@ -232,7 +232,15 @@ function App() {
               {ticketName ? (
                 <p>Loading ticket: {ticketName}</p>
               ) : (
-                <p>No Tickets available currently.</p>
+                <div style={{textAlign: 'center'}}>
+                  <p>No ticket specified in URL.</p>
+                  <p style={{marginTop: '20px', color: '#b9bbbe'}}>
+                    To view a ticket, please add a <code>?ticket=FILENAME</code> parameter to the URL.
+                  </p>
+                  <p style={{marginTop: '10px', color: '#b9bbbe'}}>
+                    Example: <code>?ticket=transcript</code> to view the default transcript
+                  </p>
+                </div>
               )}
             </div>
           ) : error ? (
