@@ -1,59 +1,108 @@
-# FiveSense Ticket Viewer
+# FiveSense Ticket Viewer - React Version
 
-A simple web application to view Discord ticket transcripts, optimized for Netlify deployment.
+A modern React application for viewing Discord ticket transcripts, optimized for Vercel deployment.
 
 ## Features
 
 - View Discord ticket transcripts in a clean, easy-to-read interface
 - Responsive design that works on desktop and mobile devices
-- Multiple access methods: Interactive viewer and direct links
-- Optimized for Netlify deployment with proper routing
-- No build process required - works with static file hosting
+- Dynamic ticket loading via URL parameters
+- Password protection for secure access
+- Automatic session management (24-hour sessions)
+- Optimized for Vercel deployment with proper routing
 
-## Files
+## Getting Started
 
-- `index.html` - Main web page for viewing tickets with multiple access options
-- `ticket/transcript.html` - Original ticket transcript file in subdirectory
-- `transcript.html` - Copy of transcript file in root directory for direct access
-- `netlify.toml` - Netlify configuration for proper routing
-- `server.py` - Simple Python server for local testing (optional)
+### Prerequisites
 
-## Deployment to Netlify
+- Node.js (version 14 or higher)
+- npm or yarn
 
-1. Create a free account at [netlify.com](https://netlify.com)
-2. Drag and drop the entire folder to Netlify's deployment area, or:
-   - Connect your Git repository to Netlify
-   - Set the publish directory to `/` (root)
-   - No build command is needed (set to `echo 'No build command needed'`)
+### Installation
 
-## Access Methods
-
-After deployment, you can access your transcript in multiple ways:
-
-1. **Interactive Viewer**: Visit your site URL and click "Load Transcript"
-2. **Direct Links**:
-   - `[your-site-url]/transcript.html` - Direct access to transcript
-   - `[your-site-url]/ticket/transcript.html` - Access from original folder structure
-
-## Local Testing
-
-If you want to test locally:
-
-1. Make sure you have Python installed on your system
-2. Navigate to this directory in your terminal/command prompt
-3. Run the server:
+1. Clone the repository
+2. Navigate to the project directory:
    ```
-   python server.py
+   cd react-ticket-viewer
    ```
-4. Your browser should automatically open to `http://localhost:8000`
+3. Install dependencies:
+   ```
+   npm install
+   ```
 
-## Manual Access
+### Running the Application
 
-If your browser doesn't open automatically, navigate to:
-- http://localhost:8000 - Main viewer page
-- http://localhost:8000/transcript.html - Direct access to transcript
-- http://localhost:8000/ticket/transcript.html - Access from folder
+To start the development server:
+```
+npm start
+```
 
-## Stopping the Server
+The application will be available at http://localhost:3000
 
-Press `Ctrl+C` in the terminal/command prompt where the server is running to stop it.
+### Building for Production
+
+To create a production build:
+```
+npm run build
+```
+
+## Deployment to Vercel
+
+1. Create a free account at [vercel.com](https://vercel.com)
+2. Install the Vercel CLI:
+   ```
+   npm install -g vercel
+   ```
+3. Deploy the application:
+   ```
+   vercel
+   ```
+
+## Usage
+
+### Password Protection
+The application is protected with a password. The default password is `kubcas3xbmw`.
+- Correct password grants 24-hour access
+- Wrong password redirects to https://fivesense.re/
+- Users can logout manually to end their session
+
+### Accessing Tickets
+Access tickets by specifying the ticket name in the URL using the `ticket` parameter:
+
+Example: `https://your-site.vercel.app/?ticket=ticket123`
+
+This will load the ticket file located at `ticket/ticket123.html`.
+
+## Project Structure
+
+```
+react-ticket-viewer/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── manifest.json
+├── src/
+│   ├── App.js
+│   ├── App.css
+│   ├── index.js
+│   └── index.css
+├── ticket/
+│   └── transcript.html
+├── package.json
+└── vercel.json
+```
+
+## Customization
+
+To customize the appearance or functionality:
+
+1. Modify the CSS in `src/App.css`
+2. Update the React component in `src/App.js`
+3. Adjust routing rules in `vercel.json` if needed
+4. Change the password in `src/App.js` (search for 'kubcas3xbmw')
+
+## Learn More
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
