@@ -60,8 +60,8 @@ function App() {
 
     // Construct path to ticket file
     const paths = [
-      `./ticket/${ticketName}.html`,
       `/ticket/${ticketName}.html`,
+      `./ticket/${ticketName}.html`,
       `ticket/${ticketName}.html`
     ];
 
@@ -75,7 +75,7 @@ function App() {
       fetch(paths[index])
         .then(response => {
           if (!response.ok) {
-            throw new Error('Transcript file not found');
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
           return response.text();
         })
@@ -252,6 +252,9 @@ function App() {
               <p>{error}</p>
               <p style={{marginTop: '15px', fontSize: '0.9rem'}}>
                 Make sure the ticket file exists in the <code>/ticket</code> directory and is accessible.
+              </p>
+              <p style={{marginTop: '10px', fontSize: '0.9rem'}}>
+                Current URL: {window.location.href}
               </p>
             </div>
           ) : (
