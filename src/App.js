@@ -238,7 +238,10 @@ function App() {
                     To view a ticket, please add a <code>?ticket=FILENAME</code> parameter to the URL.
                   </p>
                   <p style={{marginTop: '10px', color: '#b9bbbe'}}>
-                    Example: <code>?ticket=transcript</code> to view the default transcript
+                    Example: <a href="?ticket=transcript" style={{color: '#7289da'}}>?ticket=transcript</a> to view the default transcript
+                  </p>
+                  <p style={{marginTop: '20px', color: '#b9bbbe', fontSize: '0.9rem'}}>
+                    Note: The ticket files are located in the <code>/ticket</code> directory.
                   </p>
                 </div>
               )}
@@ -247,6 +250,9 @@ function App() {
             <div className="error">
               <h3><i className="fas fa-exclamation-triangle"></i> Error Loading Transcript</h3>
               <p>{error}</p>
+              <p style={{marginTop: '15px', fontSize: '0.9rem'}}>
+                Make sure the ticket file exists in the <code>/ticket</code> directory and is accessible.
+              </p>
             </div>
           ) : (
             <div dangerouslySetInnerHTML={{ __html: ticketContent }} />
