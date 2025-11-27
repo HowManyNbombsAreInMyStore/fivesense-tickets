@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiveSense Ticket Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c2f33;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background-color: #23272a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #7289da;
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .subtitle {
+            color: #b9bbbe;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        .viewer {
+            background-color: #23272a;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .instructions {
+            background-color: #23272a;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .instructions h2 {
+            color: #7289da;
+            border-bottom: 2px solid #7289da;
+            padding-bottom: 10px;
+        }
+        .instructions ul {
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        #transcript-container {
+            height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #40444b;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #36393f;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7289da;
+        }
+        .error {
+            color: #f04747;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #677bc4;
+        }
+        .links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .link-card {
+            background-color: #23272a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .link-card h3 {
+            color: #7289da;
+            margin-top: 0;
+        }
+        .link-card a {
+            display: block;
+            background-color: #7289da;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .link-card a:hover {
+            background-color: #677bc4;
+        }
+        footer {
+            text-align: center;
+            color: #b9bbbe;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FiveSense Ticket Viewer</h1>
+            <p class="subtitle">View and manage your Discord ticket transcripts</p>
+        </header>
+        
+        <div class="links">
+            <div class="link-card">
+                <h3>Interactive Viewer</h3>
+                <p>Load and view ticket transcripts with our interactive viewer</p>
+                <button id="load-transcript">Load Transcript</button>
+            </div>
+            <div class="link-card">
+                <h3>Direct Access</h3>
+                <p>View the transcript directly in your browser</p>
+                <a href="./transcript.html" target="_blank">Open Transcript</a>
+                <a href="./ticket/transcript.html" target="_blank">Open from Folder</a>
+            </div>
+        </div>
+        
+        <div class="viewer">
+            <div id="transcript-container">
+                <div class="loading">
+                    <h3>Welcome to FiveSense Ticket Viewer</h3>
+                    <p>Click "Load Transcript" to view the ticket transcript in the panel above, or use the direct links to open it separately.</p>
+                    <p>The transcript will be displayed exactly as it appeared in Discord.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>How to Use</h2>
+            <ul>
+                <li><strong>Interactive Viewer:</strong> Click the "Load Transcript" button to load the transcript into the viewer panel above</li>
+                <li><strong>Direct Access:</strong> Use the "Open Transcript" links to view the transcript directly in your browser</li>
+                <li><strong>Hosting on Netlify:</strong> This viewer is designed to work seamlessly with Netlify hosting</li>
+                <li><strong>Mobile Friendly:</strong> The viewer works on both desktop and mobile devices</li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer>
+        <p>FiveSense Ticket Viewer &copy; 2025 | Designed for Discord Transcript Viewing</p>
+    </footer>
+
+    <script>
+        document.getElementById('load-transcript').addEventListener('click', loadTranscript);
+
+        function loadTranscript() {
+            const container = document.getElementById('transcript-container');
+            container.innerHTML = '<div class="loading">Loading transcript...</div>';
+
+            // Try multiple paths to accommodate different hosting environments
+            const paths = [
+                './ticket/transcript.html',
+                '/ticket/transcript.html',
+                'ticket/transcript.html',
+                './transcript.html',
+                '/transcript.html',
+                'transcript.html'
+            ];
+
+            const tryPath = (index) => {
+                if (index >= paths.length) {
+                    container.innerHTML = '<div class="error"><h3>Error Loading Transcript</h3><p>Could not load transcript file. Please ensure transcript.html exists in either the root directory or the ticket subdirectory.</p><p>Tried the following paths:<br>' + paths.join('<br>') + '</p></div>';
+                    return;
+                }
+
+                fetch(paths[index])
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Transcript file not found');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        container.innerHTML = data;
+                        
+                        // Apply some additional styling to make it fit better
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            #transcript-container {
+                                background-color: #36393f;
+                                height: auto;
+                                max-height: 80vh;
+                            }
+                            #transcript-container .panel {
+                                background-color: #2f3136;
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    })
+                    .catch(error => {
+                        console.error(`Error loading transcript from ${paths[index]}:`, error);
+                        // Try the next path
+                        tryPath(index + 1);
+                    });
+            };
+
+            // Start with the first path
+            tryPath(0);
+        }
+    </script>
+</body>
+</html>
