@@ -35,13 +35,32 @@
                         }
                     })
                     .then(html => {
+                        // Parse ticket name to extract category and user
+                        // Expected format: category-username (e.g., order-bbbskai)
+                        const parts = ticketName.split('-');
+                        const category = parts[0] || 'unknown';
+                        const username = parts.slice(1).join('-') || 'unknown';
+                        
                         // Replace the title in the transcript with the ticket name
-                        const modifiedHtml = html.replace(
+                        let modifiedHtml = html.replace(
                             /<title>(.*?)<\/title>/, 
                             `<title>FiveSense - ${ticketName}</title>`
                         ).replace(
                             /Official FiveSense - (.*?)(<\/title>)/, 
                             `Official FiveSense - ${ticketName}$2`
+                        );
+                        
+                        // Create the new formatted description
+                        const newDescription = `Ticket Category: ${category}
+Created by: ${username} ($2)
+Discord: Official FiveSense (.gg/7wr73PsBGr) 
+Messages: $5
+Date: $6`;
+                        
+                        // Replace all instances of the old description format with the new one
+                        modifiedHtml = modifiedHtml.replace(
+                            /Transcript of channel (.*?) \((\d+)\) from (.*?) \((\d+)\) with (\d+) messages\. This transcript was generated on (.*? UTC)\./g,
+                            newDescription
                         );
                         
                         document.open();
