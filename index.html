@@ -1,13 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ticket Viewer | FiveSense</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiveSense Tickets</title>
+</head>
+<body>
+    <script>
+        // Get the current path
+        const path = window.location.pathname;
+        
+        // If we're at the root or index, redirect to fivesense.re
+        if (path === '/' || path === '/index.html') {
+            window.location.href = 'https://fivesense.re';
+        } 
+        // If we're looking for a transcript (e.g., /ticket/order-bbbskai)
+        else if (path.startsWith('/ticket/')) {
+            // Extract the ticket name from the path
+            const ticketName = path.substring(8); // Remove '/ticket/' from path
+            
+            // If there's a ticket name, try to load its transcript
+            if (ticketName) {
+                // Construct the path to the transcript file
+                const transcriptPath = '/ticket/transcript.html';
+                
+                // Try to load the transcript
+                fetch(transcriptPath)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            // If file doesn't exist, redirect to fivesense.re
+                            window.location.href = 'https://fivesense.re';
+                        }
+                    })
+                    .then(html => {
+                        // Replace the title in the transcript with the ticket name
+                        const modifiedHtml = html.replace(
+                            /<title>(.*?)<\/title>/, 
+                            `<title>FiveSense - ${ticketName}</title>`
+                        ).replace(
+                            /Official FiveSense - (.*?)(<\/title>)/, 
+                            `Official FiveSense - ${ticketName}$2`
+                        );
+                        
+                        document.open();
+                        document.write(modifiedHtml);
+                        document.close();
+                    })
+                    .catch(error => {
+                        // If there's an error, redirect to fivesense.re
+                        window.location.href = 'https://fivesense.re';
+                    });
+            } else {
+                // If no ticket name, redirect to fivesense.re
+                window.location.href = 'https://fivesense.re';
+            }
+        }
+        // For any other path, redirect to fivesense.re
+        else {
+            window.location.href = 'https://fivesense.re';
+        }
+    </script>
+</body>
 </html>
