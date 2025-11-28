@@ -14,16 +14,73 @@ const TranscriptViewer = ({ currentTranscript, onTranscriptChange }) => {
     setError(null);
     
     try {
-      // In a real implementation, this would fetch from an API
-      // For now, we'll simulate with sample data
+      // Try to fetch the actual transcript file
+      const response = await fetch(`/ticket/${transcriptName}.html`);
+      
+      if (response.ok) {
+        const htmlContent = await response.text();
+        // Parse the HTML content to extract messages
+        const parsedData = parseTranscriptHTML(htmlContent, transcriptName);
+        setTranscriptData(parsedData);
+      } else {
+        // If file doesn't exist, show sample data
+        const sampleData = generateSampleTranscript(transcriptName);
+        setTranscriptData(sampleData);
+      }
+    } catch (err) {
+      // If there's an error fetching, show sample data
+      console.warn('Could not load transcript file, showing sample data:', err);
       const sampleData = generateSampleTranscript(transcriptName);
       setTranscriptData(sampleData);
-    } catch (err) {
-      setError('Failed to load transcript');
-      console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const parseTranscriptHTML = (htmlContent, name) => {
+    // This is a simplified parser - in a real implementation, 
+    // you would want a more robust HTML parser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
+    
+    // Extract title (assuming it's in an h1 or h2 tag)
+    const titleElement = doc.querySelector('h1, h2');
+    const title = titleElement ? titleElement.textContent : `${name.replace('transcript', 'Ticket ')}`;
+    
+    // Extract messages (this would depend on your HTML structure)
+    const messageElements = doc.querySelectorAll('.message, .msg, .message-item');
+    const messages = [];
+    
+    messageElements.forEach((el, index) => {
+      // Try to extract user info and content
+      const userElement = el.querySelector('.username, .user, .author');
+      const contentElement = el.querySelector('.content, .text, .message-content');
+      const timestampElement = el.querySelector('.timestamp, .time');
+      
+      messages.push({
+        id: index + 1,
+        user: {
+          id: 'unknown',
+          username: userElement ? userElement.textContent : 'Unknown User',
+          avatar: null
+        },
+        timestamp: timestampElement ? timestampElement.getAttribute('data-timestamp') || new Date().toISOString() : new Date().toISOString(),
+        content: contentElement ? contentElement.textContent : el.textContent
+      });
+    });
+    
+    return {
+      id: name,
+      title: title,
+      openedAt: new Date().toISOString(),
+      closedAt: null,
+      messages: messages.length > 0 ? messages : [{
+        id: 1,
+        user: { id: 'system', username: 'System', avatar: null },
+        timestamp: new Date().toISOString(),
+        content: 'No messages found in transcript. Displaying raw content:\n\n' + htmlContent.substring(0, 500) + '...'
+      }]
+    };
   };
 
   const generateSampleTranscript = (name) => {
